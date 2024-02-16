@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Dropzone from '@/components/dropzone'
 import { FilePlusIcon, InfoCircledIcon } from '@radix-ui/react-icons'
 import { PackageJSON, PackageJsonSchema } from '@/lib/utils'
@@ -48,6 +48,17 @@ const Repackage = () => {
       setError(error)
     }
   }
+
+  useEffect(() => {
+    const handleUnload = (event: BeforeUnloadEvent) => {
+      if (packageJson) {
+        event.preventDefault()
+        event.returnValue = true
+      }
+    }
+    window.addEventListener('beforeunload', handleUnload)
+    return () => window.removeEventListener('beforeunload', handleUnload)
+  }, [packageJson])
 
   return (
     <div>
