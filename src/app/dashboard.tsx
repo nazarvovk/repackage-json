@@ -1,6 +1,8 @@
-import { Dependencies, DependenciesSchema, PackageJSON } from '@/lib/utils'
+import { Dependencies, DependenciesSchema, PackageJSON, cn } from '@/lib/utils'
 import { DependencyTable } from './dependency-table'
 import { ArchiveIcon } from '@radix-ui/react-icons'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
+import { Button } from '@/components/ui/button'
 
 type DashboardProps = {
   packageJson: PackageJSON
@@ -26,36 +28,100 @@ export const Dashboard = (props: DashboardProps) => {
 
   const dependencies = getDependencies(packageJson)
 
-  return (
-    <div>
-      <div className='mb-2 flex items-center justify-between gap-2'>
-        <h2 className='flex items-center gap-2 text-2xl font-bold'>
-          <ArchiveIcon className='inline-block size-8' />
-          {packageJson.name ? (
-            <span className='text-blue-500'>{packageJson.name}</span>
-          ) : (
-            <span className='rounded-md border border-dashed bg-rose-100 px-2 text-rose-700'>
-              No &quot;name&quot; field in the file
-            </span>
-          )}
-          {packageJson.version && (
-            <span className='rounded-md border bg-zinc-100 px-2 py-1 text-xl text-zinc-700'>
-              {packageJson.version}
-            </span>
-          )}
-        </h2>
-      </div>
-      {packageJson.description && (
-        <p className='mb-2 text-sm text-zinc-500'>{packageJson.description}</p>
-      )}
-      <hr className='mb-2' />
+  const fullPackageId = packageJson.name
+    ? packageJson.version
+      ? `${packageJson.name}@${packageJson.version}`
+      : `${packageJson.name}@latest`
+    : null
 
-      <h3 className='mb-2 text-xl font-bold'>Dependencies:</h3>
-      <div className='grid gap-4 md:grid-cols-2'>
-        {Object.entries(dependencies).map(([key, deps]) => {
-          return <DependencyTable key={key} label={`"${key}"`} dependencies={deps} />
-        })}
+  return (
+    <TooltipProvider delayDuration={100}>
+      <div className='space-y-2 rounded px-8 py-2 md:ring md:ring-ring'>
+        <div className='mb-8 space-y-2'>
+          <h2 className='flex items-center gap-2'>
+            <Tooltip>
+              <TooltipTrigger disabled={!fullPackageId} asChild>
+                <Button
+                  variant='ghost'
+                  className='-mx-2 size-12 p-2'
+                  onClick={() => {
+                    if (!fullPackageId) return
+                    navigator.clipboard.writeText(fullPackageId)
+                  }}
+                >
+                  <ArchiveIcon className='size-full' />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent className='bg-background text-current shadow ring-1 ring-ring'>
+                <p>
+                  Copy &quot;<code className='text-blue-500'>{fullPackageId}</code>&quot; to
+                  clipboard
+                </p>
+              </TooltipContent>
+            </Tooltip>
+            <Tooltip>
+              <TooltipTrigger disabled={!packageJson.name} asChild>
+                <Button
+                  variant='ghost'
+                  className={cn([
+                    'p-2 text-2xl font-bold',
+                    packageJson.name ? 'text-blue-500' : 'text-rose-700',
+                  ])}
+                  onClick={() => {
+                    if (!packageJson.name) return
+                    navigator.clipboard.writeText(packageJson.name)
+                  }}
+                >
+                  {packageJson.name ?? 'No "name" field in the file'}
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent className='bg-background text-current shadow ring-1 ring-ring'>
+                <p>
+                  Copy &quot;<code className='text-blue-500'>{packageJson.name}</code>&quot; to
+                  clipboard
+                </p>
+              </TooltipContent>
+            </Tooltip>
+            {packageJson.version && (
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant='outline'
+                    className='p-2 text-lg font-bold'
+                    onClick={() => {
+                      if (!packageJson.version) return
+                      navigator.clipboard.writeText(packageJson.version)
+                    }}
+                  >
+                    {packageJson.version}
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent className='bg-background text-current shadow ring-1 ring-ring'>
+                  <p>
+                    Copy &quot;<code className='text-blue-500'>{packageJson.version}</code>&quot; to
+                    clipboard
+                  </p>
+                </TooltipContent>
+              </Tooltip>
+            )}
+          </h2>
+          {packageJson.description && (
+            <p className='rounded px-2 py-0.5 text-sm font-semibold ring ring-ring'>
+              {packageJson.description}
+            </p>
+          )}
+        </div>
+
+        <div className='rounded px-4 py-2 ring ring-ring'>
+          <h3 className='text-xl font-bold'>Dependencies</h3>
+          <hr className='my-2' />
+          <div className='grid gap-4 md:grid-cols-2'>
+            {Object.entries(dependencies).map(([key, deps]) => {
+              return <DependencyTable key={key} label={`"${key}"`} dependencies={deps} />
+            })}
+          </div>
+        </div>
       </div>
-    </div>
+    </TooltipProvider>
   )
 }
