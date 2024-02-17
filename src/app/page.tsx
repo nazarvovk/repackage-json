@@ -1,4 +1,9 @@
-import Repackage from './repackage'
+import type { Metadata } from 'next'
+import { Repackage } from './repackage'
+
+export const metadata: Metadata = {
+  title: 'RePackage.JSON',
+}
 
 export default function Home() {
   return (

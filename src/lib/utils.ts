@@ -6,7 +6,9 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
-const DependenciesSchema = z.record(z.string())
+export const DependenciesSchema = z.record(z.string())
+
+export type Dependencies = z.infer<typeof DependenciesSchema>
 
 export const PackageJsonSchema = z.object({
   name: z.string().optional(),

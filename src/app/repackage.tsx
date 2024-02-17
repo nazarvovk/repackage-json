@@ -34,7 +34,7 @@ const processPackageJson = async (files: FileList) => {
   })
 }
 
-const Repackage = () => {
+export const Repackage = () => {
   const [error, setError] = useState<unknown>(null)
   const [packageJson, setPackageJson] = useState<null | PackageJSON>(null)
   const handleImportFile = async (files: FileList | null) => {
@@ -87,5 +87,3 @@ const Repackage = () => {
     </div>
   )
 }
-
-export default Repackage
