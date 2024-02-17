@@ -113,7 +113,17 @@ export const Dashboard = (props: DashboardProps) => {
         </div>
 
         <div className='rounded px-4 py-2 ring ring-ring'>
-          <h3 className='text-xl font-bold'>Dependencies</h3>
+          <div className='flex items-center gap-2'>
+            <h3 className='text-xl font-bold'>Dependencies</h3>
+            <ul className='flex items-center gap-2'>
+              {Object.entries(dependencies).map(([key, deps]) => (
+                <li key={key} className='rounded bg-zinc-200 p-2 text-xs font-semibold'>
+                  <span className='mr-1 rounded bg-zinc-300 p-1'>{Object.keys(deps).length}</span>
+                  {key}
+                </li>
+              ))}
+            </ul>
+          </div>
           <hr className='my-2' />
           <div className='grid gap-4 md:grid-cols-2'>
             {Object.entries(dependencies).map(([key, deps]) => {
