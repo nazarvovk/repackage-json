@@ -9,7 +9,7 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { Dependencies } from '@/lib/utils'
-import { ChevronDownIcon, CopyIcon } from '@radix-ui/react-icons'
+import { ChevronDownIcon, CopyIcon, DotsVerticalIcon } from '@radix-ui/react-icons'
 import {
   AccessorKeyColumnDef,
   DisplayColumnDef,
@@ -70,6 +70,40 @@ const DEPENDENCY_TABLE_COLUMNS = [
     accessorKey: 'version' satisfies keyof Dependency,
     cell: ({ cell }) => <span className='py-4 font-mono'>{cell.getValue()}</span>,
   } satisfies AccessorKeyColumnDef<Dependency, string>,
+  {
+    id: 'select',
+    header: 'Actions',
+    cell: ({ row }) => (
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <div className='flex justify-center py-1'>
+            <Button variant='ghost' className='p-2'>
+              <DotsVerticalIcon className='size-4' />
+            </Button>
+          </div>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent>
+          <DropdownMenuItem className='cursor-pointer'>
+            <a
+              href={`https://www.npmjs.com/package/${row.original.name}`}
+              target='_blank'
+              rel='noreferrer'
+            >
+              <svg viewBox='0 0 780 250' className='size-8'>
+                <path
+                  fill='#231F20'
+                  d='M240,250h100v-50h100V0H240V250z M340,50h50v100h-50V50z M480,0v200h100V50h50v150h50V50h50v150h50V0H480z M0,200h100V50h50v150h50V0H0V200z'
+                ></path>
+              </svg>
+              View <code className='text-blue-500'>{row.original.name}</code> on npm
+            </a>
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    ),
+    enableSorting: false,
+    enableHiding: false,
+  } satisfies CustomColumnDef<Dependency>,
 ] as const satisfies (DependencyPropColumnDef | CustomColumnDef<Dependency>)[]
 
 type DependenciesProps = {
