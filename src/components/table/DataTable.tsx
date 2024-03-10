@@ -1,37 +1,17 @@
-import {
-  ColumnDef,
-  InitialTableState,
-  flexRender,
-  getCoreRowModel,
-  getFilteredRowModel,
-  getPaginationRowModel,
-  getSortedRowModel,
-  useReactTable,
-} from '@tanstack/react-table'
+import { Table as ReactTableType, flexRender } from '@tanstack/react-table'
 import { DataTablePagination } from './DataTablePagination'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../ui/table'
 
-export interface DataTableProps<TRow = unknown, TValue = unknown> {
-  data: TRow[]
-  columns: ColumnDef<TRow, TValue>[]
-  initialState: InitialTableState
-  pageSizes: number[]
+export interface DataTableProps<TRow = unknown> {
+  table: ReactTableType<TRow>
+  pageSizes?: number[]
 }
 
-export const DataTable = <TRow, TValue>(props: DataTableProps<TRow, TValue>) => {
-  const { data, columns, initialState, pageSizes } = props
-
-  const table = useReactTable({
-    data,
-    columns,
-    getCoreRowModel: getCoreRowModel(),
-    getSortedRowModel: getSortedRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-    initialState,
-  })
+export const DataTable = <TRow,>(props: DataTableProps<TRow>) => {
+  const { table, pageSizes } = props
 
   const { rows } = table.getRowModel()
+  const columns = table.getAllColumns()
 
   return (
     <div className='space-y-2'>
