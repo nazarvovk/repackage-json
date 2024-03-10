@@ -1,9 +1,15 @@
 import { DataTable } from '@/components/table/DataTable'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { Dependencies } from '@/lib/utils'
-import { CopyIcon } from '@radix-ui/react-icons'
+import { ChevronDownIcon, CopyIcon } from '@radix-ui/react-icons'
 import {
   AccessorKeyColumnDef,
   DisplayColumnDef,
@@ -105,26 +111,60 @@ export const DependencyTable = (props: DependenciesProps) => {
 
   return (
     <div className='space-y-2'>
-      <div className='flex items-center justify-between'>
+      <div className='flex flex-wrap items-center justify-between'>
         <h3 className='text-lg font-bold'>{label}</h3>
-        <Tooltip>
-          <TooltipTrigger disabled={false} asChild>
-            <Button
-              variant='outline'
-              onClick={() => {
-                navigator.clipboard.writeText(depString) // TODO
-              }}
-            >
-              <CopyIcon className='mr-2 size-4' />
-              Copy selected
-            </Button>
-          </TooltipTrigger>
-          <TooltipContent className='bg-background text-current shadow ring-1 ring-ring'>
-            <p className='max-w-sm whitespace-pre-wrap'>
-              Copy to clipboard: <code className='text-blue-500'>{depString}</code>
-            </p>
-          </TooltipContent>
-        </Tooltip>
+        <div className='whitespace-nowrap'>
+          <Tooltip>
+            <TooltipTrigger disabled={selectedRows.length === 0} asChild>
+              <Button
+                variant='outline'
+                onClick={() => {
+                  navigator.clipboard.writeText(depString)
+                }}
+                className='rounded-r-none'
+              >
+                <CopyIcon className='mr-2 size-4' />
+                Copy selected
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent className='bg-background text-current shadow ring-1 ring-ring'>
+              <p className='max-w-sm whitespace-pre-wrap'>
+                Copy to clipboard: <code className='text-blue-500'>{depString}</code>
+              </p>
+            </TooltipContent>
+          </Tooltip>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild disabled={selectedRows.length === 0}>
+              <Button variant='outline' className='rounded-l-none border-l-0 p-2'>
+                <ChevronDownIcon className='size-4' />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent>
+              <Tooltip>
+                <TooltipTrigger disabled={false} asChild>
+                  <DropdownMenuItem
+                    onClick={() => {
+                      navigator.clipboard.writeText(depStringWithVersions)
+                    }}
+                    className='cursor-pointer'
+                  >
+                    <CopyIcon className='mr-2 size-4' />
+                    Copy with versions
+                  </DropdownMenuItem>
+                </TooltipTrigger>
+                <TooltipContent
+                  side='right'
+                  className='bg-background text-current shadow ring-1 ring-ring'
+                >
+                  <p className='max-w-sm whitespace-pre-wrap'>
+                    Copy to clipboard:{' '}
+                    <code className='text-blue-500'>{depStringWithVersions}</code>
+                  </p>
+                </TooltipContent>
+              </Tooltip>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
       </div>
       <DataTable table={table} />
     </div>
