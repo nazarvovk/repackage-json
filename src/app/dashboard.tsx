@@ -36,7 +36,7 @@ export const Dashboard = (props: DashboardProps) => {
 
   return (
     <TooltipProvider delayDuration={100}>
-      <div className='space-y-2 rounded px-8 py-2 md:ring md:ring-ring'>
+      <div className='space-y-2 rounded px-8 py-2'>
         <div className='mb-8 space-y-2'>
           <h2 className='flex items-center gap-2'>
             <Tooltip>
